@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Christmas Intro - Mở Quà</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      height: 100vh;
+      overflow: hidden;
+      background: #050f0a;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      /* Bạn có thể thay link ảnh nền photorealistic ở đây */
+      background: radial-gradient(circle at center, #164028 0%, #050f0a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: url('https://www.transparenttextures.com/patterns/snow.png');
+      opacity: 0.3;
+      z-index: 1;
+    }
+
+    canvas#snow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+    }
+
+    /* ===== NÂNG CẤP HỘP QUÀ ===== */
+    .gift-container {
+      perspective: 1000px;
+      margin-bottom: 20px;
+    }
+
+    .gift-btn {
+      width: 140px;
+      height: 140px;
+      background: #c0392b;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 
+        0 20px 50px rgba(0,0,0,0.5),
+        inset -5px -5px 15px rgba(0,0,0,0.3),
+        inset 5px 5px 15px rgba(255,255,255,0.2);
+      transform-style: preserve-3d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Ánh sáng xung quanh hộp quà */
+    .gift-btn::before {
+      content: "";
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(circle, rgba(241, 196, 15, 0.2) 0%, transparent 70%);
+      z-index: -1;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+    }
+
+    /* Ruy băng */
+    .ribbon-v {
+      position: absolute;
+      width: 25px;
+      height: 100%;
+      background: #f1c40f;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .ribbon-h {
+      position: absolute;
+      width: 100%;
+      height: 25px;
+      background: #f1c40f;
+      top: 50%;
+      transform: translateY(-50%);
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    /* Cái nơ */
+    .bow {
+      position: absolute;
+      top: -20px;
+      width: 50px;
+      height: 30px;
+      background: #f1c40f;
+      border-radius: 50% 50% 50% 50% / 100% 100% 0% 0%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .bow::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #d4ac0d;
+      border-radius: 50%;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .gift-btn:hover {
+      filter: brightness(1.1);
+    }
+
+    .hint-text {
+      color: #f1c40f;
+      margin-top: 40px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      opacity: 0.8;
+      text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hero">
+    <div class="overlay"></div>
+    <canvas id="snow"></canvas>
+
+    <div class="content">
+      <div class="gift-container">
+        <div class="gift-btn" id="openGift">
+          <div class="ribbon-v"></div>
+          <div class="ribbon-h"></div>
+          <div class="bow"></div>
+        </div>
+      </div>
+      <p class="hint-text">Chạm vào hộp quà để mở</p>
+    </div>
+  </div>
+
+  <script>
+    /* ===== HIỆU ỨNG VÀO TRANG ===== */
+    gsap.from(".gift-container", {
+      y: 100,
+      opacity: 0,
+      duration: 1.5,
+      ease: "power4.out"
+    });
+
+    // Hiệu ứng hộp quà đung đưa nhẹ nhàng
+    gsap.to(".gift-btn", {
+      rotation: 5,
+      duration: 2,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    });
+
+    // Hiệu ứng khi Click
+    document.getElementById("openGift").addEventListener("click", function() {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // Chuyển sang trang page2.html (Trang lời chúc)
+          window.location.href = "page2.html"; 
+        }
+      });
+
+      tl.to(".gift-btn", { scale: 0.9, duration: 0.1 })
+        .to(".gift-btn", { 
+          scale: 5, 
+          opacity: 0, 
+          rotation: 20,
+          duration: 0.7, 
+          ease: "expo.in" 
+        })
+        .to(".hero", { 
+          backgroundColor: "#fff", 
+          duration: 0.5 
+        }, "-=0.3");
+    });
+
+    /* ===== HỆ THỐNG TUYẾT RƠI (MỊN) ===== */
+    const canvas = document.getElementById("snow");
+    const ctx = canvas.getContext("2d");
+    let w, h, flakes = [];
+
+    function initSnow() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      flakes = [];
+      for (let i = 0; i < 120; i++) {
+        flakes.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 2 + 1,
+          s: Math.random() * 0.8 + 0.2,
+          o: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    function drawSnow() {
+      ctx.clearRect(0, 0, w, h);
+      flakes.forEach(f => {
+        ctx.fillStyle = `rgba(255, 255, 255, ${f.o})`;
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fill();
+        
+        f.y += f.s;
+        if (f.y > h) f.y = -5;
+      });
+      requestAnimationFrame(drawSnow);
+    }
+
+    window.addEventListener("resize", initSnow);
+    initSnow();
+    drawSnow();
+  </script>
+
+</body>
+</html>
